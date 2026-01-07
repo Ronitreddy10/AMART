@@ -11,8 +11,8 @@ echo [INFO] Committing changes...
 %GIT_CMD% commit -m "Update: Enhanced Reports page, CSV ingestion, Analytics"
 
 echo.
-echo [INFO] Pushing to GitHub...
-%GIT_CMD% push origin main
+echo [WARN] Remote may have changes (e.g. README). Overwriting...
+%GIT_CMD% push origin main --force
 
 echo.
 echo [SUCCESS] Code pushed to GitHub!
