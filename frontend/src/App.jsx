@@ -315,43 +315,114 @@ function App() {
           {/* ===== REPORTS VIEW ===== */}
           {activeView === 'reports' && (
             <motion.div key="reports" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="container section">
-              <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '48px' }}>
                   <BarChart2 size={28} style={{ color: 'var(--color-accent)' }} />
-                  <h1 className="display-section">Attack Reports</h1>
+                  <h1 className="display-section">Security Report</h1>
                 </div>
 
-                {/* Summary Stats */}
-                {attackHistory.length > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
-                    <div className="card" style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-accent)' }}>{attackHistory.length}</div>
-                      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Total Attacks</div>
+                {/* Security Score Hero */}
+                <div className="card" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', color: 'white', marginBottom: '32px', padding: '40px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.7, marginBottom: '8px' }}>Overall Security Score</div>
+                  <div style={{
+                    fontSize: '80px',
+                    fontWeight: 800,
+                    background: attackHistory.filter(a => a.success).length === 0 ? 'linear-gradient(135deg, #22c55e, #10b981)' : 'linear-gradient(135deg, #f97316, #ef4444)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    lineHeight: 1
+                  }}>
+                    {attackHistory.length > 0 ? Math.round(100 - (attackHistory.filter(a => a.success).length / attackHistory.length) * 100) : 100}
+                  </div>
+                  <div style={{ fontSize: '16px', marginTop: '8px', opacity: 0.8 }}>
+                    {attackHistory.filter(a => a.success).length === 0 ? '🛡️ Excellent Defense' : '⚠️ Vulnerabilities Detected'}
+                  </div>
+
+                  {/* Mini Stats Row */}
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div>
+                      <div style={{ fontSize: '28px', fontWeight: 700 }}>{attackHistory.length}</div>
+                      <div style={{ fontSize: '12px', opacity: 0.6 }}>Total Tests</div>
                     </div>
-                    <div className="card" style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '32px', fontWeight: 700, color: '#34c759' }}>{attackHistory.filter(a => a.success).length}</div>
-                      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Breaches Found</div>
+                    <div>
+                      <div style={{ fontSize: '28px', fontWeight: 700, color: '#ef4444' }}>{attackHistory.filter(a => a.success).length}</div>
+                      <div style={{ fontSize: '12px', opacity: 0.6 }}>Breaches</div>
                     </div>
-                    <div className="card" style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '32px', fontWeight: 700 }}>{attackHistory.length > 0 ? Math.round((attackHistory.filter(a => a.success).length / attackHistory.length) * 100) : 0}%</div>
-                      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Success Rate</div>
+                    <div>
+                      <div style={{ fontSize: '28px', fontWeight: 700, color: '#22c55e' }}>{attackHistory.filter(a => !a.success).length}</div>
+                      <div style={{ fontSize: '12px', opacity: 0.6 }}>Blocked</div>
                     </div>
                   </div>
-                )}
+                </div>
 
+                {/* Quick Insights */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '32px' }}>
+                  <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(34,197,94,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Shield size={24} style={{ color: '#22c55e' }} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Defense Rate</div>
+                      <div style={{ fontSize: '24px', fontWeight: 700 }}>{attackHistory.length > 0 ? Math.round((attackHistory.filter(a => !a.success).length / attackHistory.length) * 100) : 100}%</div>
+                    </div>
+                  </div>
+                  <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <AlertTriangle size={24} style={{ color: '#f97316' }} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Risk Level</div>
+                      <div style={{ fontSize: '24px', fontWeight: 700 }}>{attackHistory.filter(a => a.success).length === 0 ? 'Low' : attackHistory.filter(a => a.success).length <= 2 ? 'Medium' : 'High'}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                <div className="card" style={{ marginBottom: '32px' }}>
+                  <h3 style={{ fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Zap size={18} style={{ color: '#f59e0b' }} /> Recommendations
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {attackHistory.filter(a => a.success).length > 0 ? (
+                      <>
+                        <div style={{ padding: '12px 16px', background: 'rgba(239,68,68,0.06)', borderRadius: '8px', borderLeft: '3px solid #ef4444' }}>
+                          <strong>Critical:</strong> Implement stricter input validation to prevent prompt injection attacks.
+                        </div>
+                        <div style={{ padding: '12px 16px', background: 'rgba(249,115,22,0.06)', borderRadius: '8px', borderLeft: '3px solid #f97316' }}>
+                          <strong>Warning:</strong> Review RAG retrieval filters - cross-tenant data leakage detected.
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ padding: '12px 16px', background: 'rgba(34,197,94,0.06)', borderRadius: '8px', borderLeft: '3px solid #22c55e' }}>
+                          <strong>Good:</strong> No breaches detected. Continue monitoring with regular red-team audits.
+                        </div>
+                        <div style={{ padding: '12px 16px', background: 'rgba(59,130,246,0.06)', borderRadius: '8px', borderLeft: '3px solid #3b82f6' }}>
+                          <strong>Tip:</strong> Run attacks with different goals to ensure comprehensive coverage.
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Attack History */}
+                <h3 style={{ fontWeight: 600, marginBottom: '16px' }}>Attack History</h3>
                 {attackHistory.length === 0 ? (
-                  <div className="card" style={{ textAlign: 'center', padding: '80px' }}>
+                  <div className="card" style={{ textAlign: 'center', padding: '60px' }}>
                     <FileText size={48} style={{ color: 'var(--color-text-muted)', opacity: 0.3, marginBottom: '16px' }} />
-                    <p style={{ color: 'var(--color-text-muted)' }}>No attacks run yet. Go to Console to start.</p>
+                    <p style={{ color: 'var(--color-text-muted)', marginBottom: '16px' }}>No attacks run yet.</p>
+                    <button onClick={() => setActiveView('console')} className="btn-primary" style={{ margin: '0 auto' }}>
+                      <Play size={16} /> Start First Audit
+                    </button>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {attackHistory.map(attack => (
-                      <details key={attack.id} className="card" style={{ borderLeft: `4px solid ${attack.success ? '#ff3b30' : '#86868b'}`, cursor: 'pointer' }}>
+                      <details key={attack.id} className="card" style={{ borderLeft: `4px solid ${attack.success ? '#ff3b30' : '#22c55e'}`, cursor: 'pointer' }}>
                         <summary style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none' }}>
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-                              <span className={`badge`} style={{ background: attack.success ? 'rgba(255,59,48,0.1)' : 'var(--color-bg-alt)', color: attack.success ? '#ff3b30' : 'var(--color-text-muted)' }}>
+                              <span className={`badge`} style={{ background: attack.success ? 'rgba(255,59,48,0.1)' : 'rgba(34,197,94,0.1)', color: attack.success ? '#ff3b30' : '#22c55e' }}>
                                 {attack.success ? 'Breach' : 'Blocked'}
                               </span>
                               <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{attack.time}</span>
